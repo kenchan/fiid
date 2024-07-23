@@ -8,12 +8,13 @@ app.get('/', async (c) => {
   if (!rssUrl) {
     return c.json({ error: 'feed_url query parameter is required' }, 400)
   }
+  const num = parseInt(c.req.query('num') || '1')
   const response = await fetch(rssUrl)
   const xmlData = await response.text()
   const parser = new XMLParser()
   const feed = parser.parse(xmlData)
-  const firstEntry = feed.rss.channel.item[0]
-  return c.json(firstEntry)
+  const entries = feed.rss.channel.item.slice(0, num)
+  return c.json(entries)
 })
 
 export default app
